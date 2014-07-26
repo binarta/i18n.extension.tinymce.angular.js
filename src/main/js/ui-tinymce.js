@@ -74,6 +74,10 @@ angular.module('ui.tinymce', [])
                         tinyInstance.setContent(ngModel.$viewValue || '');
                     }
                 };
+
+                scope.$on('$destroy', function() {
+                    tinymce.get(attrs.id).remove();
+                });
             }
         };
     }]);
