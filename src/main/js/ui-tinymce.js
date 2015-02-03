@@ -76,7 +76,7 @@ angular.module('ui.tinymce', [])
                 };
 
                 scope.$on('$destroy', function() {
-                    tinymce.get(attrs.id).remove();
+                    if (tinymce.get(attrs.id)) tinymce.get(attrs.id).remove();
                 });
             }
         };
