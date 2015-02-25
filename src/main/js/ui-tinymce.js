@@ -3,7 +3,7 @@
  */
 angular.module('ui.tinymce', ['image-management'])
     .value('uiTinymceConfig', {})
-    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', function (uiTinymceConfig, imageManagement) {
+    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'topicMessageDispatcher', function (uiTinymceConfig, imageManagement, topicMessageDispatcher) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
         return {
@@ -31,6 +31,12 @@ angular.module('ui.tinymce', ['image-management'])
 
                 expression.file_browser_callback = function(field_name, url, type, win) {
                     if(type=='image') imageManagement.triggerFileUpload();
+                    else {
+                        topicMessageDispatcher.fire('system.info', {
+                            code: 'upload.file.browser.unsupported',
+                            default: 'Only images can be uploaded at this time.'
+                        });
+                    }
                 };
 
                 // make config'ed setup method available
