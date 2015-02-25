@@ -1,9 +1,9 @@
 /**
  * Binds a TinyMCE widget to <textarea> elements.
  */
-angular.module('ui.tinymce', [])
+angular.module('ui.tinymce', ['image-management'])
     .value('uiTinymceConfig', {})
-    .directive('uiTinymce', ['uiTinymceConfig', function (uiTinymceConfig) {
+    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', function (uiTinymceConfig, imageManagement) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
         return {
@@ -28,6 +28,10 @@ angular.module('ui.tinymce', [])
                 } else {
                     expression = {};
                 }
+
+                expression.file_browser_callback = function(field_name, url, type, win) {
+                    if(type=='image') imageManagement.triggerFileUpload();
+                };
 
                 // make config'ed setup method available
                 if (expression.setup) {
