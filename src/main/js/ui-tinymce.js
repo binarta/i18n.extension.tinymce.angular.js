@@ -1,7 +1,7 @@
 /**
  * Binds a TinyMCE widget to <textarea> elements.
  */
-angular.module('ui.tinymce', ['image-management'])
+angular.module('ui.tinymce', ['image-management', 'notifications'])
     .value('uiTinymceConfig', {})
     .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'topicMessageDispatcher', function (uiTinymceConfig, imageManagement, topicMessageDispatcher) {
         uiTinymceConfig = uiTinymceConfig || {};
