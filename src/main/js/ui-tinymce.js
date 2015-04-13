@@ -3,7 +3,7 @@
  */
 angular.module('ui.tinymce', ['image-management', 'notifications'])
     .value('uiTinymceConfig', {})
-    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'topicMessageDispatcher', function (uiTinymceConfig, imageManagement, topicMessageDispatcher) {
+    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'topicMessageDispatcher', '$timeout', function (uiTinymceConfig, imageManagement, topicMessageDispatcher, $timeout) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
         return {
@@ -91,26 +91,32 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                 };
                 // extend options with initial uiTinymceConfig and options from directive attribute value
                 angular.extend(options, uiTinymceConfig, expression);
-                setTimeout(function () {
+
+                function checkIfTinymceIsAvailable() {
+                    if (typeof tinymce != 'undefined') {
+                        tinymceIsAvailable();
+                    } else {
+                        $timeout(checkIfTinymceIsAvailable, 100);
+                    }
+                }
+                checkIfTinymceIsAvailable();
+
+                function tinymceIsAvailable () {
                     tinymce.init(options);
-                });
 
-                ngModel.$render = function() {
-                    if (!tinyInstance) {
-                        tinyInstance = tinymce.get(attrs.id);
-                    }
-                    if (tinyInstance) {
-                        tinyInstance.setContent(ngModel.$viewValue || '');
-                    }
-                };
+                    ngModel.$render = function() {
+                        if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
+                        if (tinyInstance) tinyInstance.setContent(ngModel.$viewValue || '');
+                    };
 
-                scope.$on('$destroy', function() {
-                    if (!tinyInstance) { tinyInstance = tinymce.get(attrs.id); }
-                    if (tinyInstance) {
-                        tinyInstance.remove();
-                        tinyInstance = null;
-                    }
-                });
+                    scope.$on('$destroy', function() {
+                        if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
+                        if (tinyInstance) {
+                            tinyInstance.remove();
+                            tinyInstance = null;
+                        }
+                    });
+                }
             }
         };
     }]);
