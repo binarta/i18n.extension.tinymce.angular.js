@@ -1,6 +1,9 @@
 {
     "name": "binarta.i18n.extension.tinymce.angular",
-    "main": "./src/main/js/ui-tinymce.js",
+    "main": [
+      "./src/main/js/ui-tinymce.js",
+      "./metadata.json"
+    ],
     "dependencies": {
         "angular": "1.3.*",
         "binarta.images.angular": "0.*.*"
