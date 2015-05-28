@@ -1,0 +1,16 @@
+{
+  "msgs":{
+    "nl":{
+      "upload.file.browser.unsupported": "Momenteel kunnen enkel afbeeldingen worden opgeladen."
+    },
+    "en":{
+      "upload.file.browser.unsupported": "Only images can be uploaded at this time."
+    },
+    "fr":{
+      "upload.file.browser.unsupported": "Un seul téléchargement des images est actuellement possible."
+    },
+    "de":{
+      "upload.file.browser.unsupported": "Zurzeit können nur Bilder hochgeladen werden."
+    }
+  }
+}
