@@ -106,7 +106,11 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
 
                     ngModel.$render = function() {
                         if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
-                        if (tinyInstance) tinyInstance.setContent(ngModel.$viewValue || '');
+                        if (tinyInstance) {
+                            var viewValue = ngModel.$viewValue || '';
+                            tinyInstance.setContent(viewValue);
+                            if (viewValue == '') tinyInstance.focus();
+                        }
                     };
 
                     scope.$on('$destroy', function() {
