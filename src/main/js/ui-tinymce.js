@@ -123,4 +123,88 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                 }
             }
         };
+    }])
+    .run(['$rootScope', 'editModeRenderer', function ($rootScope, editModeRenderer) {
+        $rootScope.$watch(function () {
+            return typeof tinymce != 'undefined';
+        }, function (value) {
+            if (value) addPlugin();
+        });
+
+        function addPlugin() {
+            tinymce.PluginManager.add('binartax.link', function (editor) {
+                function unlink() {
+                    editor.execCommand('unlink');
+                    editModeRenderer.close({id:'popup'});
+                }
+
+                function onclick() {
+                    var $scope = angular.extend($rootScope.$new(), {
+                        submit:function() {
+                            if(!$scope.href) {
+                                unlink();
+                            } else {
+                                var linkAttrs = {href: $scope.href};
+                                if(anchorElm) {
+                                    editor.focus();
+                                    if ($scope.text != initialText) {
+                                        if ("innerText" in anchorElm) {
+                                            anchorElm.innerText = $scope.text;
+                                        } else {
+                                            anchorElm.textContent = $scope.text;
+                                        }
+                                    }
+                                    dom.setAttribs(anchorElm, linkAttrs);
+                                    selection.select(anchorElm);
+                                    editor.undoManager.add();
+                                } else {
+                                    editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode($scope.text)));
+                                }
+                                editModeRenderer.close({id:'popup'});
+                            }
+                        },
+                        clear:unlink,
+                        cancel:function() {
+                            editModeRenderer.close({id:'popup'});
+                        }
+                    });
+
+                    var initialText;
+                    var dom = editor.dom;
+                    var selection = editor.selection;
+                    var selectedElm = selection.getNode();
+                    var anchorElm = dom.getParent(selectedElm, 'a[href]');
+
+                    $scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
+                    $scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
+
+                    editModeRenderer.open({
+                        id:'popup',
+                        template: '<form id="tinymceLinkForm" ng-submit="submit()">' +
+                        '<div class="form-group">' +
+                        '<label for="tinymceLinkFormLinkField">Address:</label>' +
+                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" placeholder="Address" ng-model="href">' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                        '<label for="tinymceLinkFormTextField">Text:</label>' +
+                        '<input type="text" class="form-control" id="tinymceLinkFormTextField" placeholder="Text" ng-model="text">' +
+                        '</div>' +
+                        '<div class=\"dropdown-menu-buttons\">' +
+                        '<button type="button" class="btn btn-danger pull-left" ng-click="clear()">Clear</button>' +
+                        '<button type="submit" class="btn btn-primary">Submit</button>' +
+                        '<button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>' +
+                        '</div>' +
+                        '</form>',
+                        scope: $scope
+                    });
+                }
+
+                editor.addButton('binartax.link', {
+                    icon: 'mce-ico mce-i-link',
+                    tooltip: 'Insert/edit link',
+                    stateSelector: 'a[href]',
+                    onclick: onclick
+                })
+            });
+        }
     }]);
