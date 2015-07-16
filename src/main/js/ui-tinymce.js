@@ -29,8 +29,8 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                     expression = {};
                 }
 
-                expression.file_browser_callback = function(field_name, url, type, win) {
-                    if(type=='image') imageManagement.triggerFileUpload();
+                expression.file_browser_callback = function (field_name, url, type, win) {
+                    if (type == 'image') imageManagement.triggerFileUpload();
                     else {
                         topicMessageDispatcher.fire('system.info', {
                             code: 'upload.file.browser.unsupported',
@@ -49,7 +49,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                     // Update model when calling setContent (such as from the source editor popup)
                     setup: function (ed) {
                         var args;
-                        ed.on('init', function(args) {
+                        ed.on('init', function (args) {
                             ngModel.$render();
                             ngModel.$setPristine();
                         });
@@ -74,7 +74,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                             ed.save();
                             updateView();
                         });
-                        ed.on('blur', function(e) {
+                        ed.on('blur', function (e) {
                             elm.blur();
                         });
                         // Update model when an object has been resized (table, image)
@@ -99,12 +99,13 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                         $timeout(checkIfTinymceIsAvailable, 100);
                     }
                 }
+
                 checkIfTinymceIsAvailable();
 
-                function tinymceIsAvailable () {
+                function tinymceIsAvailable() {
                     tinymce.init(options);
 
-                    ngModel.$render = function() {
+                    ngModel.$render = function () {
                         if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
                         if (tinyInstance) {
                             var viewValue = ngModel.$viewValue || '';
@@ -113,7 +114,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                         }
                     };
 
-                    scope.$on('$destroy', function() {
+                    scope.$on('$destroy', function () {
                         if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
                         if (tinyInstance) {
                             tinyInstance.remove();
@@ -135,17 +136,18 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
             tinymce.PluginManager.add('binartax.link', function (editor) {
                 function unlink() {
                     editor.execCommand('unlink');
-                    editModeRenderer.close({id:'popup'});
+                    editModeRenderer.close({id: 'popup'});
                 }
 
                 function onclick() {
                     var $scope = angular.extend($rootScope.$new(), {
-                        submit:function() {
-                            if(!$scope.href) {
+                        submit: function () {
+                            if (!$scope.href) {
                                 unlink();
                             } else {
                                 var linkAttrs = {href: $scope.href};
-                                if(anchorElm) {
+                                if ($scope.target) linkAttrs.target = "_blank";
+                                if (anchorElm) {
                                     editor.focus();
                                     if ($scope.text != initialText) {
                                         if ("innerText" in anchorElm) {
@@ -160,12 +162,12 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                                 } else {
                                     editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode($scope.text)));
                                 }
-                                editModeRenderer.close({id:'popup'});
+                                editModeRenderer.close({id: 'popup'});
                             }
                         },
-                        clear:unlink,
-                        cancel:function() {
-                            editModeRenderer.close({id:'popup'});
+                        clear: unlink,
+                        cancel: function () {
+                            editModeRenderer.close({id: 'popup'});
                         }
                     });
 
@@ -178,21 +180,30 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
                     $scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
                     $scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
                     $scope.showRemoveLinkButton = $scope.text || $scope.href;
+                    $scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
 
                     editModeRenderer.open({
-                        id:'popup',
+                        id: 'popup',
                         template: '<form id="tinymceLinkForm" ng-submit="submit()">' +
                         '<h4 i18n code="i18n.menu.insert.link.title" read-only>{{var}}</h4>' +
                         '<hr>' +
                         '<div class="form-group">' +
                         '<label for="tinymceLinkFormLinkField" i18n code="i18n.menu.link.url.label" read-only>{{var}}</label>' +
-                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" ng-model="href">' +
+                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" ng-model="href" autofocus>' +
                         '</div>' +
                         '<div class="form-group">' +
                         '<label for="tinymceLinkFormTextField" i18n code="i18n.menu.link.text.label" read-only>{{var}}</label>' +
                         '<input type="text" class="form-control" id="tinymceLinkFormTextField" ng-model="text">' +
                         '</div>' +
+                        '<div class="form-group">' +
+                        '<div class="checkbox-switch">' +
+                        '<input type="checkbox" id="link-target-switch" ng-model="target">' +
+                        '<label for="link-target-switch"></label>' +
+                        '<span i18n code="i18n.menu.link.target.label" read-only>{{var}}</span>' +
+                        '</div>' +
+                        '</div>' +
                         '<div class=\"dropdown-menu-buttons\">' +
+                        '<hr>' +
                         '<button type="button" class="btn btn-danger pull-left" ng-click="clear()" ng-if="showRemoveLinkButton" ' +
                         'i18n code="i18n.menu.remove.link.button" read-only>{{var}}</button>' +
                         '<button type="submit" class="btn btn-primary" i18n code="clerk.menu.ok.button" read-only>{{var}}</button>' +

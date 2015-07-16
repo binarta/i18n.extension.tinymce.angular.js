@@ -5,28 +5,32 @@
       "i18n.menu.insert.link.title": "Link toevoegen",
       "i18n.menu.remove.link.button": "Verwijder link",
       "i18n.menu.link.url.label": "Url:",
-      "i18n.menu.link.text.label": "Zichtbare tekst:"
+      "i18n.menu.link.text.label": "Zichtbare tekst:",
+      "i18n.menu.link.target.label": "Open in een nieuw tabblad"
     },
     "en":{
       "upload.file.browser.unsupported": "Only images can be uploaded at this time.",
       "i18n.menu.insert.link.title": "Insert link",
       "i18n.menu.remove.link.button": "Remove link",
       "i18n.menu.link.url.label": "Url:",
-      "i18n.menu.link.text.label": "Text to display:"
+      "i18n.menu.link.text.label": "Text to display:",
+      "i18n.menu.link.target.label": "Open in a new tab"
     },
     "fr":{
       "upload.file.browser.unsupported": "Un seul téléchargement des images est actuellement possible.",
       "i18n.menu.insert.link.title": "Insert link",
       "i18n.menu.remove.link.button": "Remove link",
       "i18n.menu.link.url.label": "Url:",
-      "i18n.menu.link.text.label": "Text to display:"
+      "i18n.menu.link.text.label": "Text to display:",
+      "i18n.menu.link.target.label": "Open in a new tab"
     },
     "de":{
       "upload.file.browser.unsupported": "Zurzeit können nur Bilder hochgeladen werden.",
       "i18n.menu.insert.link.title": "Insert link",
       "i18n.menu.remove.link.button": "Remove link",
       "i18n.menu.link.url.label": "Url:",
-      "i18n.menu.link.text.label": "Text to display:"
+      "i18n.menu.link.text.label": "Text to display:",
+      "i18n.menu.link.target.label": "Open in a new tab"
     }
   }
 }
