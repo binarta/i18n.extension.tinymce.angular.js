@@ -1,17 +1,22 @@
-basePath = '../';
-
-files = [
-    JASMINE,
-    JASMINE_ADAPTER,
-    'src/main/js/**/*.js',
-    'src/test/js/**/*.js'
-];
-
-autoWatch = true;
-
-browsers = ['PhantomJS'];
-
-junitReporter = {
-    outputFile: 'test_out/unit.xml',
-    suite: 'unit'
+module.exports = function(config) {
+    config.set({
+        basePath:'../',
+        frameworks:['jasmine'],
+        files:[
+            {pattern:'bower_components/angular/angular.js'},
+            {pattern:'bower_components/angular-mocks/angular-mocks.js'},
+            {pattern:'bower_components/angular-route/angular-route.js'},
+            {pattern:'bower_components/binarta.images.angular/src/main/js/images.js'},
+            {pattern:'bower_components/binarta.images.angular/src/main/js/image.rest.js'},
+            {pattern:'bower_components/binarta.toggle.edit.mode.angular/src/main/js/toggle.edit.mode.js'},
+            {pattern:'bower_components/binarta.config.angular/src/config.js'},
+            {pattern:'bower_components/thk-notifications-mock/src/notifications.mock.js'},
+            {pattern:'bower_components/thk-rest-client-mock/src/rest.client.mock.js'},
+            {pattern:'bower_components/binarta.usecase.adapter.angular/src/angular.usecase.adapter.js'},
+            {pattern:'bower_components/angular-bootstrap/ui-bootstrap.js'},
+            {pattern:'src/main/**/*.js'},
+            {pattern:'src/test/**/*.js'}
+        ],
+        browsers:['PhantomJS']
+    });
 };

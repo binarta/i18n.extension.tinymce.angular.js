@@ -1,8 +1,14 @@
-/**
- * Binds a TinyMCE widget to <textarea> elements.
- */
-angular.module('ui.tinymce', ['image-management', 'notifications'])
+angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.mode', 'angularx'])
     .value('uiTinymceConfig', {})
+    .run(['$rootScope', 'resourceLoader', 'activeUserHasPermission', function ($rootScope, resourceLoader, activeUserHasPermission) {
+        activeUserHasPermission({
+            yes: function () {
+                resourceLoader.add('//cdn.binarta.com/js/tinymce/4.1.7/tinymce.min.js');
+                resourceLoader.add('//cdn.binarta.com/js/tinymce/4.1.7/skins/lightgray/skin.min.css'); //pre-loading skin
+            },
+            scope: $rootScope
+        }, 'edit.mode');
+    }])
     .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'topicMessageDispatcher', '$timeout', function (uiTinymceConfig, imageManagement, topicMessageDispatcher, $timeout) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
