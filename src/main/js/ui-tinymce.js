@@ -177,22 +177,26 @@ angular.module('ui.tinymce', ['image-management', 'notifications'])
 
                     $scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
                     $scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
+                    $scope.showRemoveLinkButton = $scope.text || $scope.href;
 
                     editModeRenderer.open({
                         id:'popup',
                         template: '<form id="tinymceLinkForm" ng-submit="submit()">' +
+                        '<h4 i18n code="i18n.menu.insert.link.title" read-only>{{var}}</h4>' +
+                        '<hr>' +
                         '<div class="form-group">' +
-                        '<label for="tinymceLinkFormLinkField">Address:</label>' +
-                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" placeholder="Address" ng-model="href">' +
+                        '<label for="tinymceLinkFormLinkField" i18n code="i18n.menu.link.url.label" read-only>{{var}}</label>' +
+                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" ng-model="href">' +
                         '</div>' +
                         '<div class="form-group">' +
-                        '<label for="tinymceLinkFormTextField">Text:</label>' +
-                        '<input type="text" class="form-control" id="tinymceLinkFormTextField" placeholder="Text" ng-model="text">' +
+                        '<label for="tinymceLinkFormTextField" i18n code="i18n.menu.link.text.label" read-only>{{var}}</label>' +
+                        '<input type="text" class="form-control" id="tinymceLinkFormTextField" ng-model="text">' +
                         '</div>' +
                         '<div class=\"dropdown-menu-buttons\">' +
-                        '<button type="button" class="btn btn-danger pull-left" ng-click="clear()">Clear</button>' +
-                        '<button type="submit" class="btn btn-primary">Submit</button>' +
-                        '<button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>' +
+                        '<button type="button" class="btn btn-danger pull-left" ng-click="clear()" ng-if="showRemoveLinkButton" ' +
+                        'i18n code="i18n.menu.remove.link.button" read-only>{{var}}</button>' +
+                        '<button type="submit" class="btn btn-primary" i18n code="clerk.menu.ok.button" read-only>{{var}}</button>' +
+                        '<button type="button" class="btn btn-default" ng-click="cancel()" i18n code="clerk.menu.cancel.button" read-only>{{var}}</button>' +
                         '</div>' +
                         '</form>',
                         scope: $scope
