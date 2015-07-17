@@ -154,7 +154,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.
 
                             if (scope.tinymceLinkForm.$valid) {
                                 var linkAttrs = {href: scope.href};
-                                if (scope.target) linkAttrs.target = "_blank";
+                                scope.target ? linkAttrs.target = '_blank' : linkAttrs.target = '';
                                 if (anchorElm) {
                                     editor.focus();
                                     if (scope.text != initialText) {
