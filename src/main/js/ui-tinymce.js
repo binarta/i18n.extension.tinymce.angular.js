@@ -146,27 +146,29 @@ angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.
                 }
 
                 function onclick() {
-                    var $scope = angular.extend($rootScope.$new(), {
+                    var scope = angular.extend($rootScope.$new(), {
                         submit: function () {
-                            if (!$scope.href) {
-                                unlink();
-                            } else {
-                                var linkAttrs = {href: $scope.href};
-                                if ($scope.target) linkAttrs.target = "_blank";
+                            scope.violation = {};
+                            if (scope.tinymceLinkForm.text.$invalid) scope.violation.text = 'required';
+                            if (scope.tinymceLinkForm.url.$invalid) scope.violation.url = 'invalid';
+
+                            if (scope.tinymceLinkForm.$valid) {
+                                var linkAttrs = {href: scope.href};
+                                if (scope.target) linkAttrs.target = "_blank";
                                 if (anchorElm) {
                                     editor.focus();
-                                    if ($scope.text != initialText) {
+                                    if (scope.text != initialText) {
                                         if ("innerText" in anchorElm) {
-                                            anchorElm.innerText = $scope.text;
+                                            anchorElm.innerText = scope.text;
                                         } else {
-                                            anchorElm.textContent = $scope.text;
+                                            anchorElm.textContent = scope.text;
                                         }
                                     }
                                     dom.setAttribs(anchorElm, linkAttrs);
                                     selection.select(anchorElm);
                                     editor.undoManager.add();
                                 } else {
-                                    editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode($scope.text)));
+                                    editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(scope.text)));
                                 }
                                 editModeRenderer.close({id: 'popup'});
                             }
@@ -183,23 +185,25 @@ angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.
                     var selectedElm = selection.getNode();
                     var anchorElm = dom.getParent(selectedElm, 'a[href]');
 
-                    $scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
-                    $scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
-                    $scope.showRemoveLinkButton = $scope.text || $scope.href;
-                    $scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
+                    scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
+                    scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
+                    scope.showRemoveLinkButton = scope.href ? true: false;
+                    scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
 
                     editModeRenderer.open({
                         id: 'popup',
-                        template: '<form id="tinymceLinkForm" ng-submit="submit()">' +
+                        template: '<form name="tinymceLinkForm" id="tinymceLinkForm" ng-submit="submit()">' +
                         '<h4 i18n code="i18n.menu.insert.link.title" read-only>{{var}}</h4>' +
                         '<hr>' +
                         '<div class="form-group">' +
-                        '<label for="tinymceLinkFormLinkField" i18n code="i18n.menu.link.url.label" read-only>{{var}}</label>' +
-                        '<input type="text" class="form-control" id="tinymceLinkFormLinkField" ng-model="href" autofocus>' +
+                        '<label for="tinymceLinkFormUrlField" ng-class="{\'text-danger\': violation.url}" i18n code="i18n.menu.link.url.label" read-only>{{var}}</label>' +
+                        '<input type="url" class="form-control" name="url" id="tinymceLinkFormUrlField" ng-model="href" required autofocus>' +
+                        '<span class="help-block text-danger" ng-if="violation.url" i18n code="i18n.menu.link.url.{{violation.url}}" read-only>{{var}}</span>' +
                         '</div>' +
                         '<div class="form-group">' +
-                        '<label for="tinymceLinkFormTextField" i18n code="i18n.menu.link.text.label" read-only>{{var}}</label>' +
-                        '<input type="text" class="form-control" id="tinymceLinkFormTextField" ng-model="text">' +
+                        '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only>{{var}}</label>' +
+                        '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
+                        '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only>{{var}}</span>' +
                         '</div>' +
                         '<div class="form-group">' +
                         '<div class="checkbox-switch">' +
@@ -216,7 +220,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.
                         '<button type="button" class="btn btn-default" ng-click="cancel()" i18n code="clerk.menu.cancel.button" read-only>{{var}}</button>' +
                         '</div>' +
                         '</form>',
-                        scope: $scope
+                        scope: scope
                     });
                 }
 
