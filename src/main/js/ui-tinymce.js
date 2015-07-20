@@ -75,6 +75,7 @@ angular.module('ui.tinymce', ['image-management', 'notifications', 'toggle.edit.
                     scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
                     scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
                     scope.showRemoveLinkButton = scope.href ? true: false;
+                    scope.href = scope.href ? scope.href : 'http://';
                     scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
 
                     editModeRenderer.open({
