@@ -8,7 +8,6 @@ module.exports = function(config) {
             {pattern:'bower_components/angular-route/angular-route.js'},
             {pattern:'bower_components/binarta.images.angular/src/main/js/images.js'},
             {pattern:'bower_components/binarta.images.angular/src/main/js/image.rest.js'},
-            {pattern:'bower_components/binarta.toggle.edit.mode.angular/src/main/js/toggle.edit.mode.js'},
             {pattern:'bower_components/binarta.config.angular/src/config.js'},
             {pattern:'bower_components/thk-notifications-mock/src/notifications.mock.js'},
             {pattern:'bower_components/thk-rest-client-mock/src/rest.client.mock.js'},
