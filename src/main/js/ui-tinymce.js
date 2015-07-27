@@ -17,6 +17,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
                     'object_resizing: false,' +
+                    'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
                     'menubar:false}\"' +
@@ -35,6 +36,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
                     'object_resizing: false,' +
+                    'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
                     'menubar:false}\"' +
@@ -53,6 +55,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
                     'object_resizing: false,' +
+                    'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'extended_valid_elements : \'img[src|alt|title|width|height|original-width]\',' +
                     'media_poster: false,' +
                     'height:\'180\',' +
