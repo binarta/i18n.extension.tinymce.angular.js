@@ -63,7 +63,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'menubar:false}\"' +
                     'ng-model=\"translation\" name=\"translation\">' +
                     '</textarea>' +
-                    installer.bottomMenuControls(args.editor) +
+                    installer.bottomMenuControls(args.isEditable) +
                     '</form>';
             });
         }
