@@ -302,6 +302,8 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                             tinyInstance.remove();
                             tinyInstance = null;
                         }
+                        $document.find('body').removeClass('mce-fullscreen');
+                        $document.find('html').removeClass('mce-fullscreen');
                     });
                 }
             }
