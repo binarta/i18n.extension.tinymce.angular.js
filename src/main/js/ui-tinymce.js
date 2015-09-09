@@ -9,9 +9,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
 
         function installTemplates() {
             installer.add('full', function (args) {
-                return '<form name=\"i18nForm\" ng-submit=\"submit()\">' +
+                return '<form name="i18nForm" ng-submit="submit()">' +
+                    '<div class="bin-menu-edit-body">' +
                     installer.topMenuControls() +
-                    '<textarea ui-tinymce=\"{' +
+                    '<textarea ui-tinymce="{' +
                     'plugins: [\'link fullscreen textcolor paste table binartax.link\'],' +
                     'toolbar: \'undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | binartax.link | fullscreen\',' +
                     'theme_advanced_resizing: true,' +
@@ -20,17 +21,19 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false}\"' +
-                    'ng-model=\"translation\" name=\"translation\">' +
+                    'menubar:false}"' +
+                    'ng-model="translation" name="translation">' +
                     '</textarea>' +
+                    '</div>' +
                     installer.bottomMenuControls(args.isEditable) +
                     '</form>';
             });
 
             installer.add('media', function (args) {
-                return '<form name=\"i18nForm\" ng-submit=\"submit()\">' +
+                return '<form name="i18nForm" ng-submit="submit()">' +
+                    '<div class="bin-menu-edit-body">' +
                     installer.topMenuControls() +
-                    '<textarea ui-tinymce=\"{' +
+                    '<textarea ui-tinymce="{' +
                     'plugins: [\'fullscreen media paste\'],' +
                     'toolbar: \'undo redo | media | fullscreen\',' +
                     'theme_advanced_resizing: true,' +
@@ -39,17 +42,19 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false}\"' +
-                    'ng-model=\"translation\" name=\"translation\">' +
+                    'menubar:false}"' +
+                    'ng-model="translation" name="translation">' +
                     '</textarea>' +
+                    '</div>' +
                     installer.bottomMenuControls(args.isEditable) +
                     '</form>';
             });
 
             installer.add('full-media', function (args) {
-                return '<form name=\"i18nForm\" ng-submit=\"submit()\">' +
+                return '<form name="i18nForm" ng-submit="submit()">' +
+                    '<div class="bin-menu-edit-body">' +
                     installer.topMenuControls() +
-                    '<textarea ui-tinymce=\"{' +
+                    '<textarea ui-tinymce="{' +
                     'plugins: [\'link fullscreen binartax.img textcolor paste table binartax.link\'],' +
                     'toolbar: \'undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | binartax.link | binartax.img | fullscreen\',' +
                     'theme_advanced_resizing: true,' +
@@ -60,9 +65,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'media_poster: false,' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false}\"' +
-                    'ng-model=\"translation\" name=\"translation\">' +
+                    'menubar:false}"' +
+                    'ng-model="translation" name="translation">' +
                     '</textarea>' +
+                    '</div>' +
                     installer.bottomMenuControls(args.isEditable) +
                     '</form>';
             });
@@ -149,6 +155,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     editModeRenderer.open({
                         id: 'popup',
                         template: '<form name="tinymceLinkForm" id="tinymceLinkForm" ng-submit="submit()">' +
+                        '<div class="bin-menu-edit-body">' +
                         '<h4 i18n code="i18n.menu.insert.link.title" read-only ng-bind="var"></h4>' +
                         '<hr>' +
                         '<div class="form-group">' +
@@ -168,8 +175,8 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         '<span i18n code="i18n.menu.link.target.label" read-only ng-bind="var"></span>' +
                         '</div>' +
                         '</div>' +
-                        '<div class=\"dropdown-menu-buttons\">' +
-                        '<hr>' +
+                        '</div>' +
+                        '<div class="bin-menu-edit-actions">' +
                         '<button type="button" class="btn btn-danger pull-left" ng-click="clear()" ng-if="showRemoveLinkButton" ' +
                         'i18n code="i18n.menu.remove.link.button" read-only ng-bind="var"></button>' +
                         '<button type="submit" class="btn btn-primary" i18n code="clerk.menu.ok.button" read-only ng-bind="var"></button>' +
