@@ -196,7 +196,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             });
         }
     }])
-    .directive('uiTinymce', ['uiTinymceConfig', 'imageManagement', 'ngRegisterTopicHandler', 'topicMessageDispatcher', function (uiTinymceConfig, imageManagement, ngRegisterTopicHandler, topicMessageDispatcher) {
+    .directive('uiTinymce', ['$document', 'uiTinymceConfig', 'imageManagement', 'ngRegisterTopicHandler', 'topicMessageDispatcher', function ($document, uiTinymceConfig, imageManagement, ngRegisterTopicHandler, topicMessageDispatcher) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
         return {
