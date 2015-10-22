@@ -107,10 +107,18 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 }
 
                 function onclick() {
+                    var initialText;
+                    var dom = editor.dom;
+                    var selection = editor.selection;
+                    var selectedElm = selection.getNode();
+                    var anchorElm = dom.getParent(selectedElm, 'a[href]');
+                    var html = selection.getContent();
+                    var isOnlyTextSelected = !(/</.test(html) && (!/^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') == -1));
+
                     var scope = angular.extend($rootScope.$new(), {
                         submit: function () {
                             scope.violation = {};
-                            if (scope.tinymceLinkForm.text.$invalid) scope.violation.text = 'required';
+                            if (scope.tinymceLinkForm.text && scope.tinymceLinkForm.text.$invalid) scope.violation.text = 'required';
                             if (scope.tinymceLinkForm.url.$invalid) scope.violation.url = 'invalid';
 
                             if (scope.tinymceLinkForm.$valid) {
@@ -129,7 +137,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                                     selection.select(anchorElm);
                                     editor.undoManager.add();
                                 } else {
-                                    editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(scope.text)));
+                                    if (isOnlyTextSelected)
+                                        editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(scope.text)));
+                                    else
+                                        editor.execCommand('mceInsertLink', false, linkAttrs);
                                 }
                                 editModeRenderer.close({id: 'popup'});
                             }
@@ -139,12 +150,6 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                             editModeRenderer.close({id: 'popup'});
                         }
                     });
-
-                    var initialText;
-                    var dom = editor.dom;
-                    var selection = editor.selection;
-                    var selectedElm = selection.getNode();
-                    var anchorElm = dom.getParent(selectedElm, 'a[href]');
 
                     scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
                     scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
@@ -163,11 +168,13 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         '<input type="url" class="form-control" name="url" id="tinymceLinkFormUrlField" ng-model="href" required autofocus>' +
                         '<span class="help-block text-danger" ng-if="violation.url" i18n code="i18n.menu.link.url.{{violation.url}}" read-only ng-bind="var"></span>' +
                         '</div>' +
-                        '<div class="form-group">' +
-                        '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only ng-bind="var"></label>' +
-                        '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
-                        '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only ng-bind="var"></span>' +
-                        '</div>' +
+                        (
+                            isOnlyTextSelected ? '<div class="form-group">' +
+                            '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only ng-bind="var"></label>' +
+                            '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
+                            '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only ng-bind="var"></span>' +
+                            '</div>' : ''
+                        ) +
                         '<div class="form-group">' +
                         '<div class="checkbox-switch">' +
                         '<input type="checkbox" id="link-target-switch" ng-model="target">' +
