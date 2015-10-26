@@ -2,6 +2,7 @@
   "name": "binarta.i18n.extension.tinymce.angular",
   "main": [
     "./src/main/js/ui-tinymce.js",
+    "./css/ui-tinymce.css",
     "./metadata-system.json"
   ],
   "dependencies": {
