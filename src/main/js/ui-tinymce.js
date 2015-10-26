@@ -21,8 +21,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false,' +
-                    'statusbar: false}"' +
+                    'menubar:false}"' +
                     'ng-model="translation" name="translation">' +
                     '</textarea>' +
                     '</div>' +
@@ -43,8 +42,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false,' +
-                    'statusbar: false}"' +
+                    'menubar:false}"' +
                     'ng-model="translation" name="translation">' +
                     '</textarea>' +
                     '</div>' +
@@ -67,8 +65,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     'media_poster: false,' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false,' +
-                    'statusbar: false}"' +
+                    'menubar:false}"' +
                     'ng-model="translation" name="translation">' +
                     '</textarea>' +
                     '</div>' +
