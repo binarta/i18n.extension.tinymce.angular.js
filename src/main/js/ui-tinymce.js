@@ -210,13 +210,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             priority: 10,
             require: 'ngModel',
             link: function (scope, elm, attrs, ngModel) {
-                var expression, options, tinyInstance,
-                    updateView = function () {
-                        ngModel.$setViewValue(tinyInstance.getContent());
-                        if (!scope.$root.$$phase) {
-                            scope.$apply();
-                        }
-                    };
+                var expression, options, tinyInstance;
 
                 // generate an ID if not present
                 if (!attrs.id) {
@@ -248,39 +242,9 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 options = {
                     // Update model when calling setContent (such as from the source editor popup)
                     setup: function (ed) {
-                        var args;
-                        ed.on('init', function (args) {
+                        ed.on('init', function () {
                             ngModel.$render();
                             ngModel.$setPristine();
-                        });
-                        // Update model on button click
-                        ed.on('ExecCommand', function (e) {
-                            ed.save();
-                            updateView();
-                        });
-                        // Update model on keypress
-                        ed.on('KeyUp', function (e) {
-                            ed.save();
-                            updateView();
-                        });
-                        // Update model on change, i.e. copy/pasted text, plugins altering content
-                        ed.on('SetContent', function (e) {
-                            if (!e.initial && ngModel.$viewValue !== e.content) {
-                                ed.save();
-                                updateView();
-                            }
-                        });
-                        ed.on('change', function (e) {
-                            ed.save();
-                            updateView();
-                        });
-                        ed.on('blur', function (e) {
-                            elm.blur();
-                        });
-                        // Update model when an object has been resized (table, image)
-                        ed.on('ObjectResized', function (e) {
-                            ed.save();
-                            updateView();
                         });
                         if (configSetup) {
                             configSetup(ed);
@@ -291,6 +255,14 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 };
                 // extend options with initial uiTinymceConfig and options from directive attribute value
                 angular.extend(options, uiTinymceConfig, expression);
+
+                scope.updateModel = function () {
+                    ngModel.$setViewValue(tinyInstance.getContent());
+                    if (!scope.$root.$$phase) {
+                        scope.$apply();
+                    }
+                };
+                if (elm[0] && elm[0].form) elm[0].form.onsubmit = scope.updateModel;
 
                 ngRegisterTopicHandler({
                     scope: scope,
