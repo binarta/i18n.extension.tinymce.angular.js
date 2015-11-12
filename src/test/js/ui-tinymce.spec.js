@@ -73,8 +73,8 @@ describe('ui.tinymce', function () {
 
             it('resources are loaded', function () {
                 expect(resourceLoader.resources).toEqual([
-                    '//cdn.binarta.com/js/tinymce/4.1.7/tinymce.min.js',
-                    '//cdn.binarta.com/js/tinymce/4.1.7/skins/lightgray/skin.min.css'
+                    '//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js',
+                    '//cdn.binarta.com/js/tinymce/4.2.7/skins/lightgray/skin.min.css'
                 ]);
             });
 
