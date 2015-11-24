@@ -262,7 +262,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         scope.$apply();
                     }
                 };
-                if (elm[0] && elm[0].form) elm[0].form.onsubmit = scope.updateModel;
+                if (elm[0] && elm[0].form) angular.element(elm[0].form).bind('submit', scope.updateModel);
 
                 ngRegisterTopicHandler({
                     scope: scope,
