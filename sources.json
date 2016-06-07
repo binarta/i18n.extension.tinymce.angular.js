@@ -1,0 +1,5 @@
+{
+  "default": {
+    "ui-tinymce": "bower_components/binarta.i18n.extension.tinymce.angular/src/main/js/ui-tinymce.js"
+  }
+}
