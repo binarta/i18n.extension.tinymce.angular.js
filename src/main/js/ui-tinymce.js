@@ -74,20 +74,12 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             });
         }
     }])
-    .run(['$rootScope', '$window', 'resourceLoader', 'activeUserHasPermission', 'topicMessageDispatcher', '$timeout', function ($rootScope, $window, resourceLoader, activeUserHasPermission, topicMessageDispatcher, $timeout) {
+    .run(['$rootScope', 'resourceLoader', 'activeUserHasPermission', 'topicMessageDispatcher', function ($rootScope, resourceLoader, activeUserHasPermission, topicMessageDispatcher) {
         activeUserHasPermission({
             yes: function () {
-                resourceLoader.add('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js');
-                resourceLoader.add('//cdn.binarta.com/js/tinymce/4.2.7/skins/lightgray/skin.min.css'); //pre-loading skin
-
-                function checkIfTinymceIsAvailable() {
-                    if (typeof $window.tinymce != 'undefined') {
-                        topicMessageDispatcher.firePersistently('tinymce.loaded', true);
-                    } else {
-                        $timeout(checkIfTinymceIsAvailable, 100);
-                    }
-                }
-                checkIfTinymceIsAvailable();
+                resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
+                    topicMessageDispatcher.firePersistently('tinymce.loaded', true);
+                });
             },
             scope: $rootScope
         }, 'edit.mode');

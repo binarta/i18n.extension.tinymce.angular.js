@@ -52,10 +52,15 @@ describe('ui.tinymce', function () {
     }));
 
     describe('load tinymce', function () {
-        var resourceLoader;
+        var resourceLoader, scriptLoaderCallback;
 
         beforeEach(inject(function (_resourceLoader_) {
             resourceLoader = _resourceLoader_;
+            resourceLoader.getScript.and.returnValue({
+                then: function (callback) {
+                    scriptLoaderCallback = callback;
+                }
+            });
             $window.tinymce = undefined;
         }));
 
@@ -72,30 +77,16 @@ describe('ui.tinymce', function () {
             });
 
             it('resources are loaded', function () {
-                expect(resourceLoader.resources).toEqual([
-                    '//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js',
-                    '//cdn.binarta.com/js/tinymce/4.2.7/skins/lightgray/skin.min.css'
-                ]);
+                expect(resourceLoader.getScript).toHaveBeenCalledWith('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js');
             });
 
             describe('when tinymce is available', function () {
-                beforeEach(inject(function ($timeout) {
-                    $window.tinymce = tinymce;
-                    $timeout.flush();
-                }));
+                beforeEach(function () {
+                    scriptLoaderCallback();
+                });
 
                 it('fire notification', function () {
                     expect(topics.persistent['tinymce.loaded']).toBeTruthy();
-                });
-
-                it('notification is fired only once', function () {
-                    topics.persistent = {};
-                    $window.tinymce = undefined;
-                    $rootScope.$digest();
-                    $window.tinymce = tinymce;
-                    $rootScope.$digest();
-
-                    expect(topics.persistent['tinymce.loaded']).toBeFalsy();
                 });
             });
         });
