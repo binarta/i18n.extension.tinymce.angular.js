@@ -72,6 +72,25 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     installer.bottomMenuControls(args.isEditable) +
                     '</form>';
             });
+
+            installer.add('minimal', function (args) {
+                return '<form name="i18nForm" ng-submit="submit()">' +
+                    '<div class="bin-menu-edit-body">' +
+                    installer.topMenuControls() +
+                    '<textarea ui-tinymce="{' +
+                    'plugins: [\'paste\'],' +
+                    'toolbar: \'bold italic\',' +
+                    'forced_root_block: false,' +
+                    'valid_elements: \'em/i,strong/b,br\',' +
+                    'height:\'180\',' +
+                    (args.isEditable ? '' : 'readonly: 1,') +
+                    'menubar:false}"' +
+                    'ng-model="translation" name="translation">' +
+                    '</textarea>' +
+                    '</div>' +
+                    installer.bottomMenuControls(args.isEditable) +
+                    '</form>';
+            });
         }
     }])
     .run(['$rootScope', 'resourceLoader', 'activeUserHasPermission', 'topicMessageDispatcher', function ($rootScope, resourceLoader, activeUserHasPermission, topicMessageDispatcher) {
