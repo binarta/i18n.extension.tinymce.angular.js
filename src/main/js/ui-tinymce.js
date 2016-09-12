@@ -1,4 +1,4 @@
-angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'toggle.edit.mode', 'angularx', 'checkpoint'])
+angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'toggle.edit.mode', 'angularx', 'checkpoint', 'binarta-checkpointjs-angular1'])
     .value('uiTinymceConfig', {})
     .run(['i18nRendererTemplateInstaller', 'ngRegisterTopicHandler', function (installer, ngRegisterTopicHandler) {
         ngRegisterTopicHandler({
@@ -93,15 +93,20 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             });
         }
     }])
-    .run(['$rootScope', 'resourceLoader', 'activeUserHasPermission', 'topicMessageDispatcher', function ($rootScope, resourceLoader, activeUserHasPermission, topicMessageDispatcher) {
-        activeUserHasPermission({
-            yes: function () {
-                resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
-                    topicMessageDispatcher.firePersistently('tinymce.loaded', true);
-                });
-            },
-            scope: $rootScope
-        }, 'edit.mode');
+    .run(['$rootScope', 'resourceLoader', 'topicMessageDispatcher', 'binarta', function ($rootScope, resourceLoader, topicMessageDispatcher, binarta) {
+        function ProfileListener() {
+            var self = this;
+
+            this.signedin = function() {
+                if(binarta.checkpoint.profile.hasPermission('edit.mode')) {
+                    resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
+                        topicMessageDispatcher.firePersistently('tinymce.loaded', true);
+                    });
+                    binarta.checkpoint.profile.eventRegistry.remove(self);
+                }
+            }
+        }
+        binarta.checkpoint.profile.eventRegistry.add(new ProfileListener());
     }])
     .run(['$rootScope', 'editModeRenderer', 'ngRegisterTopicHandler', function ($rootScope, editModeRenderer, ngRegisterTopicHandler) {
         ngRegisterTopicHandler({
