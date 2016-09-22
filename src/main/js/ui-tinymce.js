@@ -98,6 +98,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             var self = this;
 
             this.signedin = function() {
+                console.log('signedin');
                 if(binarta.checkpoint.profile.hasPermission('edit.mode')) {
                     resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
                         topicMessageDispatcher.firePersistently('tinymce.loaded', true);
