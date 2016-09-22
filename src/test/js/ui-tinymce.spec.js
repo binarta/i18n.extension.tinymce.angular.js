@@ -1,10 +1,12 @@
 describe('ui.tinymce', function () {
 
-    var $rootScope, $window, registry, topics, tinymce, pluginName, editorSpy, pluginButtonObj;
+    var binarta, $rootScope, $window, registry, topics, tinymce, pluginName, editorSpy, pluginButtonObj;
 
+    // beforeEach(module('binartajs-angular1-spec'));
     beforeEach(module('ui.tinymce'));
 
-    beforeEach(inject(function (_$rootScope_, _$window_, topicRegistryMock, topicMessageDispatcherMock) {
+    beforeEach(inject(function (_binarta_, _$rootScope_, _$window_, topicRegistryMock, topicMessageDispatcherMock) {
+        binarta = _binarta_;
         $rootScope = _$rootScope_;
         $window = _$window_;
         registry = topicRegistryMock;
@@ -51,6 +53,10 @@ describe('ui.tinymce', function () {
         $window.tinymce = tinymce;
     }));
 
+    afterEach(function() {
+        binarta.checkpoint.profile.signout();
+    });
+
     describe('load tinymce', function () {
         var resourceLoader, scriptLoaderCallback;
 
@@ -65,16 +71,14 @@ describe('ui.tinymce', function () {
         }));
 
         describe('when active user has permission', function () {
-            var permitter;
-
             beforeEach(inject(function (activeUserHasPermissionHelper) {
-                permitter = activeUserHasPermissionHelper;
-                permitter.yes();
+                binarta.checkpoint.gateway.fetchPermissions = function (request, response) {
+                    response.success(['edit.mode'].map(function (it) {
+                        return {name: it}
+                    }));
+                };
+                binarta.checkpoint.registrationForm.submit({username: 'u', password: 'p'});
             }));
-
-            it('user has edit.mode permission', function () {
-                expect(permitter.permission).toEqual('edit.mode');
-            });
 
             it('resources are loaded', function () {
                 expect(resourceLoader.getScript).toHaveBeenCalledWith('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js');
