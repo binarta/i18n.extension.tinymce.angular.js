@@ -219,7 +219,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             });
         }
     }])
-    .directive('uiTinymce', ['$document', 'uiTinymceConfig', 'imageManagement', 'ngRegisterTopicHandler', 'topicMessageDispatcher', function ($document, uiTinymceConfig, imageManagement, ngRegisterTopicHandler, topicMessageDispatcher) {
+    .directive('uiTinymce', ['$document', '$parse', 'uiTinymceConfig', 'imageManagement', 'ngRegisterTopicHandler', 'topicMessageDispatcher', function ($document, $parse, uiTinymceConfig, imageManagement, ngRegisterTopicHandler, topicMessageDispatcher) {
         uiTinymceConfig = uiTinymceConfig || {};
         var generatedIds = 0;
         return {
@@ -272,14 +272,6 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 // extend options with initial uiTinymceConfig and options from directive attribute value
                 angular.extend(options, uiTinymceConfig, expression);
 
-                scope.updateModel = function () {
-                    ngModel.$setViewValue(tinyInstance.getContent());
-                    if (!scope.$root.$$phase) {
-                        scope.$apply();
-                    }
-                };
-                if (elm[0] && elm[0].form) angular.element(elm[0].form).bind('submit', scope.updateModel);
-
                 ngRegisterTopicHandler({
                     scope: scope,
                     topic: 'tinymce.loaded',
@@ -296,6 +288,15 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                             tinyInstance.setContent(viewValue);
                             if (viewValue == '') tinyInstance.focus();
                         }
+                    };
+
+                    /*
+                        On a form submit, for each ngModel, $commitViewValue is called to commit pending updates.
+                        Because in this case there are no pending updates, we override this function to update
+                        the scope value with the tinyMCE content before the actual submit is performed.
+                    */
+                    ngModel.$commitViewValue = function () {
+                        $parse(attrs.ngModel).assign(scope, tinyInstance.getContent());
                     };
 
                     scope.$on('$destroy', function () {
