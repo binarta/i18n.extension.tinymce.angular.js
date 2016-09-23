@@ -295,8 +295,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         Because in this case there are no pending updates, we override this function to update
                         the scope value with the tinyMCE content before the actual submit is performed.
                     */
+                    var commitViewValue = ngModel.$commitViewValue;
                     ngModel.$commitViewValue = function () {
                         $parse(attrs.ngModel).assign(scope, tinyInstance.getContent());
+                        commitViewValue.apply(ngModel);
                     };
 
                     scope.$on('$destroy', function () {
