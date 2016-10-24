@@ -97,8 +97,8 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
         function ProfileListener() {
             var self = this;
 
-            this.signedin = function() {
-                if(binarta.checkpoint.profile.hasPermission('edit.mode')) {
+            this.signedin = function () {
+                if (binarta.checkpoint.profile.hasPermission('edit.mode')) {
                     resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
                         topicMessageDispatcher.firePersistently('tinymce.loaded', true);
                     });
@@ -106,6 +106,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 }
             }
         }
+
         binarta.checkpoint.profile.eventRegistry.add(new ProfileListener());
     }])
     .run(['$rootScope', 'editModeRenderer', 'ngRegisterTopicHandler', function ($rootScope, editModeRenderer, ngRegisterTopicHandler) {
@@ -169,7 +170,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
 
                     scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
                     scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
-                    scope.showRemoveLinkButton = scope.href ? true: false;
+                    scope.showRemoveLinkButton = scope.href ? true : false;
                     scope.href = scope.href ? scope.href : 'http://';
                     scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
 
@@ -181,7 +182,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         '<hr>' +
                         '<div class="form-group">' +
                         '<label for="tinymceLinkFormUrlField" ng-class="{\'text-danger\': violation.url}" i18n code="i18n.menu.link.url.label" read-only ng-bind="var"></label>' +
-                        '<input type="url" class="form-control" name="url" id="tinymceLinkFormUrlField" ng-model="href" required autofocus>' +
+                        '<input type="text" class="form-control" name="url" id="tinymceLinkFormUrlField" ng-model="href" required autofocus>' +
                         '<span class="help-block text-danger" ng-if="violation.url" i18n code="i18n.menu.link.url.{{violation.url}}" read-only ng-bind="var"></span>' +
                         '</div>' +
                         (
@@ -291,10 +292,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     };
 
                     /*
-                        On a form submit, for each ngModel, $commitViewValue is called to commit pending updates.
-                        Because in this case there are no pending updates, we override this function to update
-                        the scope value with the tinyMCE content before the actual submit is performed.
-                    */
+                     On a form submit, for each ngModel, $commitViewValue is called to commit pending updates.
+                     Because in this case there are no pending updates, we override this function to update
+                     the scope value with the tinyMCE content before the actual submit is performed.
+                     */
                     var commitViewValue = ngModel.$commitViewValue;
                     ngModel.$commitViewValue = function () {
                         $parse(attrs.ngModel).assign(scope, tinyInstance.getContent());
