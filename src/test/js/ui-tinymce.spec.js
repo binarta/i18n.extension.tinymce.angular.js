@@ -2,7 +2,6 @@ describe('ui.tinymce', function () {
 
     var binarta, $rootScope, $window, registry, topics, tinymce, pluginName, editorSpy, pluginButtonObj;
 
-    // beforeEach(module('binartajs-angular1-spec'));
     beforeEach(module('ui.tinymce'));
 
     beforeEach(inject(function (_binarta_, _$rootScope_, _$window_, topicRegistryMock, topicMessageDispatcherMock) {
@@ -13,12 +12,16 @@ describe('ui.tinymce', function () {
         topics = topicMessageDispatcherMock;
 
         editorSpy = {
-            execCommand: function () {},
-            focus: function () {},
-            undoManager: {
-                add: function () {}
+            execCommand: function () {
             },
-            insertContent: function () {},
+            focus: function () {
+            },
+            undoManager: {
+                add: function () {
+                }
+            },
+            insertContent: function () {
+            },
             dom: {
                 getParent: function () {
                     return {};
@@ -33,9 +36,12 @@ describe('ui.tinymce', function () {
                 setAttribsSpy: []
             },
             selection: {
-                select: function () {},
-                getNode: function () {},
-                getContent: function () {}
+                select: function () {
+                },
+                getNode: function () {
+                },
+                getContent: function () {
+                }
             },
             addButton: function (name, obj) {
                 pluginButtonObj = obj;
@@ -53,7 +59,7 @@ describe('ui.tinymce', function () {
         $window.tinymce = tinymce;
     }));
 
-    afterEach(function() {
+    afterEach(function () {
         binarta.checkpoint.profile.signout();
     });
 
@@ -121,11 +127,33 @@ describe('ui.tinymce', function () {
                 beforeEach(function () {
                     pluginButtonObj.onclick();
                     scope = editModeRenderer.openSpy.scope;
+                    scope.tinymceLinkForm = {
+                        $valid: true,
+                        url: {$invalid: false}
+                    };
                 });
 
                 it('edit mode renderer is opened', function () {
                     expect(editModeRenderer.openSpy.id).toEqual('popup');
                     expect(editModeRenderer.openSpy.template).toEqual(jasmine.any(String));
+                });
+
+                it('on submit strip hash bang from fully qualified urls', function () {
+                    scope.href = 'http://myapp.com/#!/path';
+                    scope.submit();
+                    expect(scope.href).toEqual('http://myapp.com/path');
+                });
+
+                it('on submit strip hash bang and leading slash from relative urls', function () {
+                    scope.href = '/#!/path';
+                    scope.submit();
+                    expect(scope.href).toEqual('/path');
+                });
+
+                it('on submit strip hash bang from relative urls', function () {
+                    scope.href = '#!/path';
+                    scope.submit();
+                    expect(scope.href).toEqual('/path');
                 });
             });
         });

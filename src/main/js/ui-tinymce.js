@@ -139,6 +139,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                             if (scope.tinymceLinkForm.url.$invalid) scope.violation.url = 'invalid';
 
                             if (scope.tinymceLinkForm.$valid) {
+                                scope.href = scope.href.replace(/[\/]*#!/, '');
                                 var linkAttrs = {href: scope.href};
                                 scope.target ? linkAttrs.target = '_blank' : linkAttrs.target = '';
                                 if (anchorElm) {
