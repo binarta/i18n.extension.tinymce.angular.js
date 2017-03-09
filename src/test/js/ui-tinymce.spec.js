@@ -103,11 +103,12 @@ describe('ui.tinymce', function () {
     });
 
     describe('binartax.link plugin', function () {
-        var $rootScope, editModeRenderer;
+        var $rootScope, editModeRenderer, sanitizeUrlSpy;
 
-        beforeEach(inject(function (_$rootScope_, _editModeRenderer_) {
+        beforeEach(inject(function (_$rootScope_, _editModeRenderer_, binSanitizeUrlFilter) {
             $rootScope = _$rootScope_;
             editModeRenderer = _editModeRenderer_;
+            sanitizeUrlSpy = binSanitizeUrlFilter;
 
             $rootScope.$digest();
         }));
@@ -138,22 +139,11 @@ describe('ui.tinymce', function () {
                     expect(editModeRenderer.openSpy.template).toEqual(jasmine.any(String));
                 });
 
-                it('on submit strip hash bang from fully qualified urls', function () {
-                    scope.href = 'http://myapp.com/#!/path';
+                it('on submit, sanitize href', function () {
+                    scope.href = 'http://myapp.com/path';
+                    sanitizeUrlSpy.and.returnValue(scope.href);
                     scope.submit();
-                    expect(scope.href).toEqual('http://myapp.com/path');
-                });
-
-                it('on submit strip hash bang and leading slash from relative urls', function () {
-                    scope.href = '/#!/path';
-                    scope.submit();
-                    expect(scope.href).toEqual('/path');
-                });
-
-                it('on submit strip hash bang from relative urls', function () {
-                    scope.href = '#!/path';
-                    scope.submit();
-                    expect(scope.href).toEqual('/path');
+                    expect(sanitizeUrlSpy).toHaveBeenCalledWith(scope.href);
                 });
             });
         });
