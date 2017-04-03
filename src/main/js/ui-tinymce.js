@@ -29,27 +29,6 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                     '</form>';
             });
 
-            installer.add('media', function (args) {
-                return '<form name="i18nForm" ng-submit="submit()">' +
-                    '<div class="bin-menu-edit-body">' +
-                    installer.topMenuControls() +
-                    '<textarea ui-tinymce="{' +
-                    'plugins: [\'fullscreen media paste\'],' +
-                    'toolbar: \'undo redo | media | fullscreen\',' +
-                    'theme_advanced_resizing: true,' +
-                    'theme_advanced_resizing_use_cookie : false,' +
-                    'object_resizing: false,' +
-                    'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
-                    'height:\'180\',' +
-                    (args.isEditable ? '' : 'readonly: 1,') +
-                    'menubar:false}"' +
-                    'ng-model="translation" name="translation">' +
-                    '</textarea>' +
-                    '</div>' +
-                    installer.bottomMenuControls(args.isEditable) +
-                    '</form>';
-            });
-
             installer.add('full-media', function (args) {
                 return '<form name="i18nForm" ng-submit="submit()">' +
                     '<div class="bin-menu-edit-body">' +
