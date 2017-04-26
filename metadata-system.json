@@ -22,13 +22,13 @@
     },
     "fr":{
       "upload.file.browser.unsupported": "Un seul téléchargement des images est actuellement possible.",
-      "i18n.menu.insert.link.title": "Insert link",
-      "i18n.menu.remove.link.button": "Remove link",
+      "i18n.menu.insert.link.title": "Insérer un lien",
+      "i18n.menu.remove.link.button": "Supprimer le lien",
       "i18n.menu.link.url.label": "Url:",
-      "i18n.menu.link.text.label": "Text to display:",
-      "i18n.menu.link.target.label": "Open in a new tab",
-      "i18n.menu.link.url.invalid": "Url is invalid",
-      "i18n.menu.link.text.required": "Text is required"
+      "i18n.menu.link.text.label": "Texte à afficher:",
+      "i18n.menu.link.target.label": "Ouvrir dans un nouvel onglet",
+      "i18n.menu.link.url.invalid": "Url n'est pas valide",
+      "i18n.menu.link.text.required": "Texte est requis"
     },
     "de":{
       "upload.file.browser.unsupported": "Zurzeit können nur Bilder hochgeladen werden.",
