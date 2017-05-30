@@ -77,17 +77,17 @@ describe('ui.tinymce', function () {
         }));
 
         describe('when active user has permission', function () {
-            beforeEach(inject(function (activeUserHasPermissionHelper) {
+            beforeEach(function () {
                 binarta.checkpoint.gateway.fetchPermissions = function (request, response) {
                     response.success(['edit.mode'].map(function (it) {
                         return {name: it}
                     }));
                 };
                 binarta.checkpoint.registrationForm.submit({username: 'u', password: 'p'});
-            }));
+            });
 
             it('resources are loaded', function () {
-                expect(resourceLoader.getScript).toHaveBeenCalledWith('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js');
+                expect(resourceLoader.getScript).toHaveBeenCalledWith('//cdn.binarta.com/js/tinymce/4.6.3/tinymce.min.js');
             });
 
             describe('when tinymce is available', function () {

@@ -1,5 +1,4 @@
-angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'toggle.edit.mode', 'angularx', 'checkpoint', 'binarta-checkpointjs-angular1'])
-    .value('uiTinymceConfig', {})
+angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angularx', 'binarta-checkpointjs-angular1'])
     .run(['i18nRendererTemplateInstaller', 'ngRegisterTopicHandler', function (installer, ngRegisterTopicHandler) {
         ngRegisterTopicHandler({
             topic: 'edit.mode',
@@ -78,7 +77,7 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
 
             this.signedin = function () {
                 if (binarta.checkpoint.profile.hasPermission('edit.mode')) {
-                    resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.2.7/tinymce.min.js').then(function () {
+                    resourceLoader.getScript('//cdn.binarta.com/js/tinymce/4.6.3/tinymce.min.js').then(function () {
                         topicMessageDispatcher.firePersistently('tinymce.loaded', true);
                     });
                     binarta.checkpoint.profile.eventRegistry.remove(self);
@@ -167,10 +166,10 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                         '</div>' +
                         (
                             isOnlyTextSelected ? '<div class="form-group">' +
-                            '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only ng-bind="var"></label>' +
-                            '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
-                            '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only ng-bind="var"></span>' +
-                            '</div>' : ''
+                                '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only ng-bind="var"></label>' +
+                                '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
+                                '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only ng-bind="var"></span>' +
+                                '</div>' : ''
                         ) +
                         '<div class="form-group">' +
                         '<div class="checkbox-switch">' +
@@ -200,58 +199,23 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
             });
         }
     }])
-    .directive('uiTinymce', ['$document', '$parse', 'uiTinymceConfig', 'imageManagement', 'ngRegisterTopicHandler', 'topicMessageDispatcher', function ($document, $parse, uiTinymceConfig, imageManagement, ngRegisterTopicHandler, topicMessageDispatcher) {
-        uiTinymceConfig = uiTinymceConfig || {};
+    .directive('uiTinymce', ['$document', '$parse', 'ngRegisterTopicHandler', function ($document, $parse, ngRegisterTopicHandler) {
         var generatedIds = 0;
         return {
-            priority: 10,
             require: 'ngModel',
-            link: function (scope, elm, attrs, ngModel) {
-                var expression, options, tinyInstance;
-
-                // generate an ID if not present
-                if (!attrs.id) {
-                    attrs.$set('id', 'uiTinymce' + generatedIds++);
-                }
-
-                if (attrs.uiTinymce) {
-                    expression = scope.$eval(attrs.uiTinymce);
-                } else {
-                    expression = {};
-                }
-
-                expression.file_browser_callback = function (field_name, url, type, win) {
-                    if (type == 'image') imageManagement.triggerFileUpload();
-                    else {
-                        topicMessageDispatcher.fire('system.info', {
-                            code: 'upload.file.browser.unsupported',
-                            default: 'Only images can be uploaded at this time.'
-                        });
-                    }
+            link: function (scope, el, attrs, ngModel) {
+                var options, editor;
+                if (!attrs.id) attrs.$set('id', 'uiTinymce' + generatedIds++);
+                ngModel.$render = function () {};
+                options = scope.$eval(attrs.uiTinymce);
+                options.selector = '#' + attrs.id;
+                options.branding = false;
+                options.init_instance_callback = function (e) {
+                    editor = e;
+                    editor.show();
+                    editor.focus();
+                    editor.insertContent(ngModel.$viewValue || '');
                 };
-
-                // make config'ed setup method available
-                if (expression.setup) {
-                    var configSetup = expression.setup;
-                    delete expression.setup;
-                }
-
-                options = {
-                    // Update model when calling setContent (such as from the source editor popup)
-                    setup: function (ed) {
-                        ed.on('init', function () {
-                            ngModel.$render();
-                            ngModel.$setPristine();
-                        });
-                        if (configSetup) {
-                            configSetup(ed);
-                        }
-                    },
-                    mode: 'exact',
-                    elements: attrs.id
-                };
-                // extend options with initial uiTinymceConfig and options from directive attribute value
-                angular.extend(options, uiTinymceConfig, expression);
 
                 ngRegisterTopicHandler({
                     scope: scope,
@@ -262,15 +226,6 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                 function tinymceIsAvailable() {
                     tinymce.init(options);
 
-                    ngModel.$render = function () {
-                        if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
-                        if (tinyInstance) {
-                            var viewValue = ngModel.$viewValue || '';
-                            tinyInstance.setContent(viewValue);
-                            if (viewValue == '') tinyInstance.focus();
-                        }
-                    };
-
                     /*
                      On a form submit, for each ngModel, $commitViewValue is called to commit pending updates.
                      Because in this case there are no pending updates, we override this function to update
@@ -278,16 +233,12 @@ angular.module('ui.tinymce', ['i18n', 'image-management', 'notifications', 'togg
                      */
                     var commitViewValue = ngModel.$commitViewValue;
                     ngModel.$commitViewValue = function () {
-                        $parse(attrs.ngModel).assign(scope, tinyInstance.getContent());
+                        $parse(attrs.ngModel).assign(scope, editor.getContent());
                         commitViewValue.apply(ngModel);
                     };
 
                     scope.$on('$destroy', function () {
-                        if (!tinyInstance) tinyInstance = tinymce.get(attrs.id);
-                        if (tinyInstance) {
-                            tinyInstance.remove();
-                            tinyInstance = null;
-                        }
+                        if (editor) editor.destroy();
                         $document.find('body').removeClass('mce-fullscreen');
                         $document.find('html').removeClass('mce-fullscreen');
                     });

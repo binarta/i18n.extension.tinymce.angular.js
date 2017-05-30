@@ -1,20 +1,14 @@
 {
   "name": "binarta.i18n.extension.tinymce.angular",
-  "main": [
-    "./src/main/js/ui-tinymce.js",
-    "./less/ui-tinymce.less",
-    "./metadata-system.json",
-    "./sources.json"
-  ],
+  "main": ["./src/main/js/ui-tinymce.js"],
   "dependencies": {
     "binarta.angularx": "0.*.*",
     "binarta.i18n.angular": "2.*.*",
-    "binarta.images.angular": "0.*.*",
     "binarta.notifications.angular": "1.*.*",
     "binarta.toggle.edit.mode.angular": "1.*.*"
   },
   "devDependencies": {
-    "angular-mocks": "1.*.*",
+    "angular-mocks": "1.5.*",
     "thk-notifications-mock": "0.*.*",
     "thk-rest-client-mock": "0.*.*"
   },
