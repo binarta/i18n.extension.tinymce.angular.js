@@ -12,7 +12,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angu
                     '<div class="bin-menu-edit-body">' +
                     installer.topMenuControls() +
                     '<textarea ui-tinymce="{' +
-                    'plugins: [\'fullscreen textcolor paste table binartax.link\'],' +
+                    'plugins: [\'fullscreen textcolor colorpicker lists paste table binartax.link\'],' +
                     'toolbar: \'undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | binartax.link | fullscreen\',' +
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
@@ -33,7 +33,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angu
                     '<div class="bin-menu-edit-body">' +
                     installer.topMenuControls() +
                     '<textarea ui-tinymce="{' +
-                    'plugins: [\'fullscreen binartax.img textcolor paste table binartax.link\'],' +
+                    'plugins: [\'fullscreen binartax.img textcolor colorpicker lists paste table binartax.link\'],' +
                     'toolbar: \'undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | binartax.link | binartax.img | fullscreen\',' +
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
