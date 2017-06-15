@@ -103,13 +103,10 @@ describe('ui.tinymce', function () {
     });
 
     describe('binartax.link plugin', function () {
-        var $rootScope, editModeRenderer, sanitizeUrlSpy;
+        var $rootScope;
 
-        beforeEach(inject(function (_$rootScope_, _editModeRenderer_, binSanitizeUrlFilter) {
+        beforeEach(inject(function (_$rootScope_) {
             $rootScope = _$rootScope_;
-            editModeRenderer = _editModeRenderer_;
-            sanitizeUrlSpy = binSanitizeUrlFilter;
-
             $rootScope.$digest();
         }));
 
@@ -120,31 +117,6 @@ describe('ui.tinymce', function () {
 
             it('add binartax.link plugin to tinymce plugin manager', function () {
                 expect(pluginName).toEqual('binartax.link');
-            });
-
-            describe('on plugin button clicked', function () {
-                var scope;
-
-                beforeEach(function () {
-                    pluginButtonObj.onclick();
-                    scope = editModeRenderer.openSpy.scope;
-                    scope.tinymceLinkForm = {
-                        $valid: true,
-                        url: {$invalid: false}
-                    };
-                });
-
-                it('edit mode renderer is opened', function () {
-                    expect(editModeRenderer.openSpy.id).toEqual('popup');
-                    expect(editModeRenderer.openSpy.template).toEqual(jasmine.any(String));
-                });
-
-                it('on submit, sanitize href', function () {
-                    scope.href = 'http://myapp.com/path';
-                    sanitizeUrlSpy.and.returnValue(scope.href);
-                    scope.submit();
-                    expect(sanitizeUrlSpy).toHaveBeenCalledWith(scope.href);
-                });
             });
         });
     });

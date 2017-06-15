@@ -1,4 +1,4 @@
-angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angularx', 'binarta-checkpointjs-angular1'])
+angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-checkpointjs-angular1'])
     .run(['i18nRendererTemplateInstaller', 'ngRegisterTopicHandler', function (installer, ngRegisterTopicHandler) {
         ngRegisterTopicHandler({
             topic: 'edit.mode',
@@ -87,7 +87,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angu
 
         binarta.checkpoint.profile.eventRegistry.add(new ProfileListener());
     }])
-    .run(['$rootScope', '$filter', 'editModeRenderer', 'ngRegisterTopicHandler', function ($rootScope, $filter, editModeRenderer, ngRegisterTopicHandler) {
+    .run(['ngRegisterTopicHandler', 'binLink', function (ngRegisterTopicHandler, binLink) {
         ngRegisterTopicHandler({
             topic: 'tinymce.loaded',
             handler: addPlugin,
@@ -96,98 +96,47 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angu
 
         function addPlugin() {
             tinymce.PluginManager.add('binartax.link', function (editor) {
-                function unlink() {
-                    editor.execCommand('unlink');
-                    editModeRenderer.close({id: 'popup'});
-                }
-
                 function onclick() {
-                    var initialText;
                     var dom = editor.dom;
                     var selection = editor.selection;
                     var selectedElm = selection.getNode();
                     var anchorElm = dom.getParent(selectedElm, 'a[href]');
                     var html = selection.getContent();
-                    var isOnlyTextSelected = !(/</.test(html) && (!/^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') == -1));
+                    var isOnlyTextSelected = !(/</.test(html) && (!/^<a [^>]+>[^<]+<\/a>$/.test(html) || html.indexOf('href=') === -1));
+                    var initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
 
-                    var scope = angular.extend($rootScope.$new(), {
-                        submit: function () {
-                            scope.violation = {};
-                            if (scope.tinymceLinkForm.text && scope.tinymceLinkForm.text.$invalid) scope.violation.text = 'required';
-                            if (scope.tinymceLinkForm.url.$invalid) scope.violation.url = 'invalid';
+                    binLink.open({
+                        href: anchorElm ? dom.getAttrib(anchorElm, 'href') : '',
+                        text: initialText,
+                        allowText: true,
+                        target: anchorElm && dom.getAttrib(anchorElm, 'target'),
+                        onSubmit: onSubmit,
+                        onRemove: onRemove
+                    });
 
-                            if (scope.tinymceLinkForm.$valid) {
-                                scope.href = $filter('binSanitizeUrl')(scope.href);
-                                var linkAttrs = {href: scope.href};
-                                scope.target ? linkAttrs.target = '_blank' : linkAttrs.target = '';
-                                if (anchorElm) {
-                                    editor.focus();
-                                    if (scope.text != initialText) {
-                                        if ("innerText" in anchorElm) {
-                                            anchorElm.innerText = scope.text;
-                                        } else {
-                                            anchorElm.textContent = scope.text;
-                                        }
-                                    }
-                                    dom.setAttribs(anchorElm, linkAttrs);
-                                    selection.select(anchorElm);
-                                    editor.undoManager.add();
-                                } else {
-                                    if (isOnlyTextSelected)
-                                        editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(scope.text)));
-                                    else
-                                        editor.execCommand('mceInsertLink', false, linkAttrs);
-                                }
-                                editModeRenderer.close({id: 'popup'});
+                    function onSubmit(args) {
+                        var linkAttrs = {href: args.href, target: args.target};
+
+                        if (anchorElm) {
+                            editor.focus();
+                            if (args.text !== initialText) {
+                                if ("innerText" in anchorElm) anchorElm.innerText = args.text;
+                                else anchorElm.textContent = args.text;
                             }
-                        },
-                        clear: unlink,
-                        cancel: function () {
-                            editModeRenderer.close({id: 'popup'});
+                            dom.setAttribs(anchorElm, linkAttrs);
+                            selection.select(anchorElm);
+                            editor.undoManager.add();
+                        } else {
+                            if (isOnlyTextSelected) editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(args.text)));
+                            else editor.execCommand('mceInsertLink', false, linkAttrs);
                         }
-                    });
+                        args.success();
+                    }
 
-                    scope.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
-                    scope.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
-                    scope.showRemoveLinkButton = scope.href ? true : false;
-                    scope.href = scope.href ? scope.href : 'http://';
-                    scope.target = anchorElm && dom.getAttrib(anchorElm, 'target') == "_blank" ? true : false;
-
-                    editModeRenderer.open({
-                        id: 'popup',
-                        template: '<form name="tinymceLinkForm" id="tinymceLinkForm" ng-submit="submit()">' +
-                        '<div class="bin-menu-edit-body">' +
-                        '<h4 i18n code="i18n.menu.insert.link.title" read-only ng-bind="var"></h4>' +
-                        '<hr>' +
-                        '<div class="form-group">' +
-                        '<label for="tinymceLinkFormUrlField" ng-class="{\'text-danger\': violation.url}" i18n code="i18n.menu.link.url.label" read-only ng-bind="var"></label>' +
-                        '<input type="text" class="form-control" name="url" id="tinymceLinkFormUrlField" ng-model="href" required autofocus>' +
-                        '<span class="help-block text-danger" ng-if="violation.url" i18n code="i18n.menu.link.url.{{violation.url}}" read-only ng-bind="var"></span>' +
-                        '</div>' +
-                        (
-                            isOnlyTextSelected ? '<div class="form-group">' +
-                                '<label for="tinymceLinkFormTextField" ng-class="{\'text-danger\': violation.text}" i18n code="i18n.menu.link.text.label" read-only ng-bind="var"></label>' +
-                                '<input type="text" class="form-control" name="text" id="tinymceLinkFormTextField" ng-model="text" required>' +
-                                '<span class="help-block text-danger" ng-if="violation.text" i18n code="i18n.menu.link.text.{{violation.text}}" read-only ng-bind="var"></span>' +
-                                '</div>' : ''
-                        ) +
-                        '<div class="form-group">' +
-                        '<div class="checkbox-switch">' +
-                        '<input type="checkbox" id="link-target-switch" ng-model="target">' +
-                        '<label for="link-target-switch"></label>' +
-                        '<span i18n code="i18n.menu.link.target.label" read-only ng-bind="var"></span>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="bin-menu-edit-actions">' +
-                        '<button type="button" class="btn btn-danger pull-left" ng-click="clear()" ng-if="showRemoveLinkButton" ' +
-                        'i18n code="i18n.menu.remove.link.button" read-only ng-bind="var"></button>' +
-                        '<button type="submit" class="btn btn-primary" i18n code="clerk.menu.ok.button" read-only ng-bind="var"></button>' +
-                        '<button type="button" class="btn btn-default" ng-click="cancel()" i18n code="clerk.menu.cancel.button" read-only ng-bind="var"></button>' +
-                        '</div>' +
-                        '</form>',
-                        scope: scope
-                    });
+                    function onRemove(args) {
+                        editor.execCommand('unlink');
+                        args.success();
+                    }
                 }
 
                 editor.addButton('binartax.link', {
@@ -195,7 +144,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'toggle.edit.mode', 'angu
                     tooltip: 'Insert/edit link',
                     stateSelector: 'a[href]',
                     onclick: onclick
-                })
+                });
             });
         }
     }])
