@@ -1,5 +1,5 @@
-angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-checkpointjs-angular1'])
-    .run(['i18nRendererTemplateInstaller', 'ngRegisterTopicHandler', function (installer, ngRegisterTopicHandler) {
+angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-checkpointjs-angular1', 'config'])
+    .run(['i18nRendererTemplateInstaller', 'ngRegisterTopicHandler', 'config', function (installer, ngRegisterTopicHandler, config) {
         ngRegisterTopicHandler({
             topic: 'edit.mode',
             handler: installTemplates,
@@ -17,6 +17,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-chec
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
                     'object_resizing: false,' +
+                    'document_base_url: \'' + config.baseUri + '\',' +
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'height:\'180\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
@@ -38,6 +39,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-chec
                     'theme_advanced_resizing: true,' +
                     'theme_advanced_resizing_use_cookie : false,' +
                     'object_resizing: false,' +
+                    'document_base_url: \'' + config.baseUri + '\',' +
                     'content_css: \'//cdn.binarta.com/css/tinymce/content.css\',' +
                     'extended_valid_elements : \'img[src|alt|title|width|height|original-width|style]\',' +
                     'media_poster: false,' +
@@ -61,6 +63,7 @@ angular.module('ui.tinymce', ['i18n', 'notifications', 'angularx', 'binarta-chec
                     'forced_root_block: false,' +
                     'valid_elements: \'em/i,strong/b,br\',' +
                     'height:\'180\',' +
+                    'document_base_url: \'' + config.baseUri + '\',' +
                     (args.isEditable ? '' : 'readonly: 1,') +
                     'menubar:false}"' +
                     'ng-model="translation" name="translation">' +
